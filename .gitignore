@@ -18,3 +18,5 @@ phpunit.xml
 .idea
 *.bak
 *.swp
+.env
+firebase-adminsdk.json
