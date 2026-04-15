@@ -1,0 +1,26 @@
+name: Deploy Admin Panel
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            cd ~/domains/admin.jebly.tn/public_html
+            git pull origin main
+            /opt/alt/php82/usr/bin/php -d extension=sodium.so /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction
+            /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan config:cache
+            /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan route:cache
+            /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan view:cache
+            echo "Deploy complete"
