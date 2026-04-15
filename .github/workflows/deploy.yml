@@ -11,19 +11,15 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | base64 -d > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          ssh-keygen -l -f ~/.ssh/id_ed25519
 
-      - name: Deploy via SSH
+      - name: Deploy
         run: |
-          ssh -p ${{ secrets.SSH_PORT }} -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'ENDSSH'
-            set -e
-            cd ~/domains/admin.jebly.tn/public_html
-            git pull origin main
-            /opt/alt/php82/usr/bin/php -d extension=sodium.so /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction
-            /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan config:cache
-            /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan route:cache
-            /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan view:cache
-            echo "Deploy complete"
-          ENDSSH
+          ssh -p ${{ secrets.SSH_PORT }} \
+              -i ~/.ssh/id_ed25519 \
+              -o StrictHostKeyChecking=no \
+              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+              'cd ~/domains/admin.jebly.tn/public_html && git pull origin main && /opt/alt/php82/usr/bin/php -d extension=sodium.so /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction && /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan config:cache && /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan route:cache && echo "Deploy complete"'
