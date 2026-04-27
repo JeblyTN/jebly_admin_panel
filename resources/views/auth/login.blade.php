@@ -162,6 +162,9 @@
             setCookie('favicon', globalSettings.favicon, 365);
             admin_panel_color = globalSettings.admin_panel_color;
             setCookie('admin_panel_color', admin_panel_color, 365);
+            if (globalSettings.appLogo) {
+                $('.login-logo img').attr('src', globalSettings.appLogo);
+            }
             $('.login-register').css({'background-color': admin_panel_color});
             document.title = globalSettings.meta_title;
             var favicon = '<?php echo @$_COOKIE['favicon'] ?>';

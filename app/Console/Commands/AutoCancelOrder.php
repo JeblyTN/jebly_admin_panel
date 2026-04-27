@@ -25,7 +25,7 @@ class AutoCancelOrder extends Command
      */
     public function handle()
     {
-        $node_path = env('NODE_PATH', '');
+        $node_path = config('firebase.node_path', '');
 
         if (! empty($node_path)) {
 

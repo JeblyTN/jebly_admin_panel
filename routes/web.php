@@ -3,6 +3,20 @@
 use Illuminate\Support\Facades\Route;
 use OpenAI\Laravel\Facades\OpenAI;
 
+Route::get("/debug-firebase", function() {
+    return response()->json([
+        "FIREBASE_APIKEY" => config("firebase.apikey"),
+        "FIREBASE_APP_ID" => config("firebase.app_id"),
+        "FIREBASE_PROJECT_ID" => config("firebase.project_id"),
+        "FIREBASE_MESSAAGING_SENDER_ID" => config("firebase.messaging_sender_id"),
+        "cookies_set" => [
+            "AK" => bin2hex(config("firebase.apikey", "")),
+            "AD" => bin2hex(config("firebase.auth_domain", "")),
+        ],
+        "app_key" => env("APP_KEY") ? "set" : "missing",
+    ]);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
