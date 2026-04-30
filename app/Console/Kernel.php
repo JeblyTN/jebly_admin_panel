@@ -16,6 +16,14 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('app:send-scheduled-order-notification')->everyMinute();
+        $schedule->exec(
+            config('firebase.node_path', '/opt/alt/alt-nodejs20/root/usr/bin/node') . ' ' .
+            base_path('scripts/generate_payouts.js') . ' ' .
+            base_path('storage/app/firebase/credentials.json')
+        )
+            ->weeklyOn(1, '00:01')
+            ->timezone('Africa/Tunis')
+            ->appendOutputTo(storage_path('logs/payouts.log'));
         /*$schedule->command('app:auto-cancel-order')->everyMinute();*/
     }
 

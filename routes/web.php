@@ -167,6 +167,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/driver-deposits/{id}/reject', [App\Http\Controllers\DriverController::class, 'rejectDeposit'])->name('drivers.rejectDeposit');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/weekly-payouts', [App\Http\Controllers\PayoutRequestController::class, 'weeklyPayouts'])->name('weeklyPayouts');
+    Route::post('/weekly-payouts/{id}/mark-paid', [App\Http\Controllers\PayoutRequestController::class, 'markPaid'])->name('weeklyPayouts.markPaid');
+    Route::post('/weekly-payouts/{id}/hold', [App\Http\Controllers\PayoutRequestController::class, 'holdPayout'])->name('weeklyPayouts.hold');
+    Route::post('/weekly-payouts/generate', [App\Http\Controllers\PayoutRequestController::class, 'generatePayouts'])->name('weeklyPayouts.generate');
+});
+
 Route::middleware(['permission:payments,payments'])->group(function () {
     Route::get('/payments', [App\Http\Controllers\AdminPaymentsController::class, 'index'])->name('payments');
 });

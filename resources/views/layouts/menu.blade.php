@@ -302,6 +302,7 @@
                     @if (in_array('payout-request', $role_has_permission))
                         <li><a href="{!! url('payoutRequests/drivers') !!}">{{ trans('lang.driver_disbursement') }}</a></li>
                     @endif
+                    <li><a href="{!! url('weekly-payouts') !!}"><i class="mdi mdi-cash-multiple mr-1"></i> Weekly Payouts</a></li>
                 </ul>
             </li>
         @endif
