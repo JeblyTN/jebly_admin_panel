@@ -129,6 +129,8 @@
                     @if (in_array('pending_drivers', $role_has_permission))
                         <li class="pending_driver_menu"><a href="{!! url('drivers/pending') !!}">{{ trans('lang.approval_pending_drivers') }}</a></li>
                     @endif
+                    <li class="cash_balance_menu"><a href="{!! url('drivers/cash-balance') !!}"><i class="mdi mdi-cash mr-1"></i> Cash Balances</a></li>
+                    <li class="cash_deposits_menu"><a href="{!! url('driver-deposits') !!}"><i class="mdi mdi-bank mr-1"></i> Cash Deposits</a></li>
                 </ul>
             </li>
         @endif

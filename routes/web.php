@@ -154,7 +154,17 @@ Route::middleware(['permission:drivers,drivers.create'])->group(function () {
     Route::get('/drivers/create', [App\Http\Controllers\DriverController::class, 'create'])->name('drivers.create');
 });
 Route::middleware(['permission:drivers,drivers.view'])->group(function () {
+
     Route::get('/drivers/view/{id}', [App\Http\Controllers\DriverController::class, 'view'])->name('drivers.view');
+});
+Route::middleware(['auth'])->group(function () {
+    Route::get('/drivers/cash-balance', [App\Http\Controllers\DriverController::class, 'cashBalance'])->name('drivers.cashBalance');
+    Route::post('/drivers/{id}/reset-cash', [App\Http\Controllers\DriverController::class, 'resetCashBalance'])->name('drivers.resetCash');
+    Route::post('/drivers/{id}/set-limit', [App\Http\Controllers\DriverController::class, 'setCashLimit'])->name('drivers.setCashLimit');
+    Route::post('/drivers/{id}/unblock', [App\Http\Controllers\DriverController::class, 'unblockDriver'])->name('drivers.unblock');
+    Route::get('/driver-deposits', [App\Http\Controllers\DriverController::class, 'deposits'])->name('drivers.deposits');
+    Route::post('/driver-deposits/{id}/confirm', [App\Http\Controllers\DriverController::class, 'confirmDeposit'])->name('drivers.confirmDeposit');
+    Route::post('/driver-deposits/{id}/reject', [App\Http\Controllers\DriverController::class, 'rejectDeposit'])->name('drivers.rejectDeposit');
 });
 
 Route::middleware(['permission:payments,payments'])->group(function () {

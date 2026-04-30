@@ -79,6 +79,8 @@ class FirestoreHelper
                         'arrayValue' => ['values' => array_map(fn($v) => ['stringValue' => $v], $value)]
                     ];
                 }
+            } elseif ($value === null) {
+                $formatted[$key] = ['nullValue' => null];
             } else {
                 $formatted[$key] = ['stringValue' => (string) $value];
             }
@@ -204,6 +206,22 @@ class FirestoreHelper
 
         if (!$response->successful()) return null;
 
+        $result = $response->json();
+        return isset($result['fields']) ? self::decodeFields($result['fields']) : null;
+    }
+
+    /** Update only specified fields using updateMask (safe partial update) */
+    public static function updateDocument($path, array $data)
+    {
+        $url = self::baseUrl() . "/{$path}";
+        $fieldPaths = implode('&', array_map(
+            fn($k) => 'updateMask.fieldPaths[]=' . urlencode($k),
+            array_keys($data)
+        ));
+        $url .= '?' . $fieldPaths;
+        $payload = ['fields' => self::encodeFields($data)];
+        $response = Http::patch($url, $payload);
+        if (!$response->successful()) return null;
         $result = $response->json();
         return isset($result['fields']) ? self::decodeFields($result['fields']) : null;
     }
