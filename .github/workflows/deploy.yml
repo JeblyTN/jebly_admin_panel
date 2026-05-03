@@ -22,4 +22,4 @@ jobs:
               -i ~/.ssh/id_ed25519 \
               -o StrictHostKeyChecking=no \
               ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-              'cd ~/domains/admin.jebly.tn/public_html && git pull origin main && /opt/alt/php82/usr/bin/php -d extension=sodium.so /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction && /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan config:cache && /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan route:cache && echo "Deploy complete"'
+              'cd ~/domains/admin.jebly.tn/public_html && git fetch origin main && git reset --hard origin/main && git clean -fd && /opt/alt/php82/usr/bin/php -d extension=sodium.so /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction && /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan config:cache && /opt/alt/php82/usr/bin/php -d extension=sodium.so artisan route:cache && echo "Deploy complete"'
