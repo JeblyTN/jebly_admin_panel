@@ -260,8 +260,16 @@
             headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
             body: formData
         })
-        .then(function (r) { return r.json(); })
-        .then(cb)
+        .then(function (r) {
+            if (!r.ok) {
+                return r.json().then(function (err) {
+                    showAlert('Erreur serveur: ' + (err.error || r.statusText), 'danger');
+                    return null;
+                });
+            }
+            return r.json();
+        })
+        .then(function (res) { if (res) cb(res); })
         .catch(function (err) { showAlert('Erreur: ' + err.message, 'danger'); });
     }
 

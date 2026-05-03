@@ -38,7 +38,11 @@ class SurgeController extends Controller
             $data['scheduledEnd'] = null;
         }
 
-        FirestoreHelper::setDocument('surgeStatus/current', $data);
+        $result = FirestoreHelper::setDocument('surgeStatus/current', $data);
+
+        if ($result === null) {
+            return response()->json(['success' => false, 'error' => 'Failed to write surge status to Firestore'], 500);
+        }
 
         // Log to surgeHistory
         $historyId = uniqid('surge_');
@@ -66,21 +70,31 @@ class SurgeController extends Controller
             'createdAt' => date('c'),
         ];
 
-        FirestoreHelper::setDocument("surgeRules/{$ruleId}", $data);
+        $result = FirestoreHelper::setDocument("surgeRules/{$ruleId}", $data);
+
+        if ($result === null) {
+            return response()->json(['success' => false, 'error' => 'Failed to create rule in Firestore'], 500);
+        }
 
         return response()->json(['success' => true, 'id' => $ruleId]);
     }
 
     public function deleteRule($id)
     {
-        FirestoreHelper::setDocument("surgeRules/{$id}", ['deleted' => true, 'active' => false]);
+        $result = FirestoreHelper::updateDocument("surgeRules/{$id}", ['deleted' => true, 'active' => false]);
+        if ($result === null) {
+            return response()->json(['success' => false, 'error' => 'Failed to delete rule in Firestore'], 500);
+        }
         return response()->json(['success' => true]);
     }
 
     public function toggleRule(Request $request, $id)
     {
         $active = $request->boolean('active', false);
-        FirestoreHelper::setDocument("surgeRules/{$id}", ['active' => $active]);
+        $result = FirestoreHelper::updateDocument("surgeRules/{$id}", ['active' => $active]);
+        if ($result === null) {
+            return response()->json(['success' => false, 'error' => 'Failed to toggle rule in Firestore'], 500);
+        }
         return response()->json(['success' => true]);
     }
 }

@@ -8,9 +8,18 @@ class FirestoreHelper
 {
     protected static function baseUrl()
     {
-        $projectId = env('FIREBASE_PROJECT_ID');
-        $projectDb = env('FIREBASE_PROJECT_DB','(default)');
+        $projectId = config('firebase.project_id');
+        $projectDb = config('firebase.project_db', '(default)');
         return "https://firestore.googleapis.com/v1/projects/{$projectId}/databases/{$projectDb}/documents";
+    }
+
+    /** Append the Firebase API key to a URL (required for REST API auth) */
+    protected static function withApiKey($url)
+    {
+        $apiKey = config('firebase.api_key') ?: config('firebase.apikey');
+        if (!$apiKey) return $url;
+        $separator = str_contains($url, '?') ? '&' : '?';
+        return $url . $separator . 'key=' . urlencode($apiKey);
     }
 
     /** Convert Firestore REST fields → clean PHP array */
@@ -111,7 +120,7 @@ class FirestoreHelper
     /** Get document as clean array */
     public static function getDocument($path)
     {
-        $url = self::baseUrl() . "/{$path}";
+        $url = self::withApiKey(self::baseUrl() . "/{$path}");
         $response = Http::get($url);
 
         if (!$response->successful()) return null;
@@ -124,7 +133,7 @@ class FirestoreHelper
     /** Get all documents using collection clean array */
     public static function getCollection($collection)
     {
-        $url = self::baseUrl() . "/{$collection}";
+        $url = self::withApiKey(self::baseUrl() . "/{$collection}");
         $response = Http::get($url);
 
         if (!$response->successful()) return [];
@@ -145,7 +154,7 @@ class FirestoreHelper
     {
         // Detect Firestore-compatible value type
         $firestoreValue = self::getFirestoreValue($value);
-        $projectId = env('FIREBASE_PROJECT_ID');
+        $projectId = config('firebase.project_id');
 
         // Firestore operator mapping
         $mappedOp = match ($op) {
@@ -159,7 +168,7 @@ class FirestoreHelper
             default => strtoupper($op),
         };
         
-        $url = self::baseUrl() . ":runQuery";
+        $url = self::withApiKey(self::baseUrl() . ":runQuery");
 
         $query = [
             'parent' => "projects/".$projectId."/databases/(default)/documents",
@@ -199,12 +208,19 @@ class FirestoreHelper
     /** Set document from clean array */
     public static function setDocument($path, array $data)
     {
-        $url = self::baseUrl() . "/{$path}";
+        $url = self::withApiKey(self::baseUrl() . "/{$path}");
         $payload = ['fields' => self::encodeFields($data)];
 
         $response = Http::patch($url, $payload);
 
-        if (!$response->successful()) return null;
+        if (!$response->successful()) {
+            logger()->error('FirestoreHelper::setDocument failed', [
+                'path' => $path,
+                'status' => $response->status(),
+                'response' => $response->json(),
+            ]);
+            return null;
+        }
 
         $result = $response->json();
         return isset($result['fields']) ? self::decodeFields($result['fields']) : null;
@@ -219,9 +235,17 @@ class FirestoreHelper
             array_keys($data)
         ));
         $url .= '?' . $fieldPaths;
+        $url = self::withApiKey($url);
         $payload = ['fields' => self::encodeFields($data)];
         $response = Http::patch($url, $payload);
-        if (!$response->successful()) return null;
+        if (!$response->successful()) {
+            logger()->error('FirestoreHelper::updateDocument failed', [
+                'path' => $path,
+                'status' => $response->status(),
+                'response' => $response->json(),
+            ]);
+            return null;
+        }
         $result = $response->json();
         return isset($result['fields']) ? self::decodeFields($result['fields']) : null;
     }

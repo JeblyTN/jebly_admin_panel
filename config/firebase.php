@@ -9,6 +9,7 @@ return [
     'messaging_sender_id' => env('FIREBASE_MESSAAGING_SENDER_ID'),
     'app_id'              => env('FIREBASE_APP_ID'),
     'measurement_id'      => env('FIREBASE_MEASUREMENT_ID'),
+    'project_db'          => env('FIREBASE_PROJECT_DB', '(default)'),
     'credentials'         => env('FIREBASE_CREDENTIALS'),
     'node_path'           => env('NODE_PATH'),
 ];
