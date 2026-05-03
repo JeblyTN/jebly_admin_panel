@@ -401,7 +401,6 @@
                     @if (in_array('delivery-charge', $role_has_permission))
                         <li><a href="{!! url('settings/app/deliveryCharge') !!}">{{ trans('lang.deliveryCharge') }}</a></li>
                     @endif
-                    <li><a href="{!! url('settings/app/driverDelivery') !!}">Livreurs &amp; Frais</a></li>
                     @if (in_array('openai-settings', $role_has_permission))
                         <li><a href="{!! url('settings/app/openai-settings') !!}">{{ trans('lang.openai_settings') }}</a></li>
                     @endif

@@ -293,7 +293,6 @@ Route::prefix('settings')->group(function () {
     Route::middleware(['permission:scheduleOrderNotification,settings.app.scheduleOrderNotification'])->group(function () {
         Route::get('app/scheduleOrderNotification', [App\Http\Controllers\SettingsController::class, 'scheduleOrderNotification'])->name('settings.app.scheduleOrderNotification');
     });
-    Route::get('app/driverDelivery', [App\Http\Controllers\SettingsController::class, 'driverDelivery'])->name('settings.app.driverDelivery');
 });
 
 Route::middleware(['permission:dinein-orders,restaurants.booktable'])->group(function () {
