@@ -422,6 +422,7 @@
                     @if (in_array('footer', $role_has_permission))
                         <li><a href="{!! url('footerTemplate') !!}">{{ trans('lang.footer_template') }}</a></li>
                     @endif
+                    <li><a href="{!! url('settings/app/driverDelivery') !!}"><i class="mdi mdi-truck-delivery mr-1"></i> Livreurs &amp; Frais de livraison</a></li>
                 </ul>
             </li>
         @endif

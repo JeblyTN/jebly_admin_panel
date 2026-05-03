@@ -241,6 +241,10 @@ Route::prefix('settings')->group(function () {
     Route::middleware(['permission:dinein,settings.app.bookTable'])->group(function () {
         Route::get('app/bookTable', [App\Http\Controllers\SettingsController::class, 'bookTable'])->name('settings.app.bookTable');
     });
+    Route::get('app/driverDelivery', function () {
+        return view('settings.driver_delivery');
+    })->name('settings.app.driverDelivery');
+
     Route::middleware(['permission:delivery-charge,settings.app.deliveryCharge'])->group(function () {
         Route::get('app/deliveryCharge', [App\Http\Controllers\SettingsController::class, 'deliveryCharge'])->name('settings.app.deliveryCharge');
     });
