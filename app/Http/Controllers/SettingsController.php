@@ -122,6 +122,11 @@ class SettingsController extends Controller
         return view("settings.app.deliveryCharge");
     }
 
+    public function driverDelivery()
+    {
+        return view("settings.app.driverDelivery");
+    }
+
     public function openaiSettings()
     {
         return view("settings.app.openaiSettings");

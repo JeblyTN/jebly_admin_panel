@@ -293,6 +293,7 @@ Route::prefix('settings')->group(function () {
     Route::middleware(['permission:scheduleOrderNotification,settings.app.scheduleOrderNotification'])->group(function () {
         Route::get('app/scheduleOrderNotification', [App\Http\Controllers\SettingsController::class, 'scheduleOrderNotification'])->name('settings.app.scheduleOrderNotification');
     });
+    Route::get('app/driverDelivery', [App\Http\Controllers\SettingsController::class, 'driverDelivery'])->name('settings.app.driverDelivery');
 });
 
 Route::middleware(['permission:dinein-orders,restaurants.booktable'])->group(function () {
@@ -595,3 +596,9 @@ Route::middleware(['permission:employee,employee'])->group(function () {
 Route::middleware(['permission:employee,employee'])->group(function () {
     Route::get('restaurant/employee/{id}', [App\Http\Controllers\EmployeeController::class, 'index'])->name('restaurants.employee');
 });
+
+Route::get('/surge', [App\Http\Controllers\SurgeController::class, 'index'])->name('surge.index');
+Route::post('/surge/toggle', [App\Http\Controllers\SurgeController::class, 'toggle'])->name('surge.toggle');
+Route::post('/surge/rules', [App\Http\Controllers\SurgeController::class, 'createRule'])->name('surge.createRule');
+Route::post('/surge/rules/{id}/delete', [App\Http\Controllers\SurgeController::class, 'deleteRule'])->name('surge.deleteRule');
+Route::post('/surge/rules/{id}/toggle', [App\Http\Controllers\SurgeController::class, 'toggleRule'])->name('surge.toggleRule');

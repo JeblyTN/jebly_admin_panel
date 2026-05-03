@@ -31,6 +31,12 @@
                 </a>
             </li>
         @endif
+        <li>
+            <a class="waves-effect waves-dark" href="{!! url('surge') !!}" aria-expanded="false">
+                <i class="mdi mdi-lightning-bolt" style="color:#f7a800"></i>
+                <span class="hide-menu">Surge Pricing</span>
+            </a>
+        </li>
         @if (in_array('god-eye', $role_has_permission) || in_array('zone', $role_has_permission))
             <li class="nav-subtitle"><span class="nav-subtitle-span">{{ trans('lang.live_monitoring') }}</span></li>
         @endif
@@ -395,6 +401,7 @@
                     @if (in_array('delivery-charge', $role_has_permission))
                         <li><a href="{!! url('settings/app/deliveryCharge') !!}">{{ trans('lang.deliveryCharge') }}</a></li>
                     @endif
+                    <li><a href="{!! url('settings/app/driverDelivery') !!}">Livreurs &amp; Frais</a></li>
                     @if (in_array('openai-settings', $role_has_permission))
                         <li><a href="{!! url('settings/app/openai-settings') !!}">{{ trans('lang.openai_settings') }}</a></li>
                     @endif

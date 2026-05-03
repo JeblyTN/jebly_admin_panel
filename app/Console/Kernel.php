@@ -24,6 +24,14 @@ class Kernel extends ConsoleKernel
             ->weeklyOn(1, '00:01')
             ->timezone('Africa/Tunis')
             ->appendOutputTo(storage_path('logs/payouts.log'));
+        $schedule->exec(
+            config('firebase.node_path', '/opt/alt/alt-nodejs20/root/usr/bin/node') . ' ' .
+            base_path('scripts/check_surge.js') . ' ' .
+            base_path('storage/app/firebase/credentials.json')
+        )
+            ->everyFiveMinutes()
+            ->timezone('Africa/Tunis')
+            ->appendOutputTo(storage_path('logs/surge.log'));
         /*$schedule->command('app:auto-cancel-order')->everyMinute();*/
     }
 
