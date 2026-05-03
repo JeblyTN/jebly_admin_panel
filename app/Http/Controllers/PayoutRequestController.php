@@ -34,13 +34,9 @@ class PayoutRequestController extends Controller
 
         $restaurantId = $payout['restaurantId'] ?? '';
         if ($restaurantId) {
-            $vendor       = $helper->getDocument('vendors/' . $restaurantId);
-            $currentTotal = (float) ($vendor['totalEarnings'] ?? 0);
-            $payoutAmount = (float) ($payout['amount'] ?? 0);
             $helper->updateDocument('vendors/' . $restaurantId, [
                 'lastPayoutAt'     => now()->toIso8601String(),
-                'lastPayoutAmount' => $payoutAmount,
-                'totalEarnings'    => $currentTotal + $payoutAmount,
+                'lastPayoutAmount' => (float) ($payout['amount'] ?? 0),
             ]);
         }
 
