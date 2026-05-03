@@ -1,12 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <h3 class="mb-4">Surge Pricing</h3>
+<div class="page-wrapper">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h3 class="text-themecolor">Surge Pricing</h3>
+        </div>
+        <div class="col-md-7 align-self-center">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">{{ trans('lang.dashboard') }}</a></li>
+                <li class="breadcrumb-item active">Surge Pricing</li>
+            </ol>
+        </div>
+        <div>
         </div>
     </div>
+    <div class="container-fluid">
 
     {{-- Current Status Card --}}
     <div class="row mb-4">
@@ -139,7 +148,8 @@
             </div>
         </div>
     </div>
-</div>
+    </div> {{-- close container-fluid --}}
+</div> {{-- close page-wrapper --}}
 
 {{-- Add Rule Modal --}}
 <div class="modal fade" id="addRuleModal" tabindex="-1" role="dialog" aria-labelledby="addRuleModalLabel" aria-hidden="true">
