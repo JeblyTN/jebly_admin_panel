@@ -249,4 +249,77 @@ class FirestoreHelper
         $result = $response->json();
         return isset($result['fields']) ? self::decodeFields($result['fields']) : null;
     }
+
+    /** Get a short-lived OAuth2 Bearer token from the service account key */
+    protected static function getServiceAccountToken()
+    {
+        $credentialsPath = config('firebase.credentials');
+        if (empty($credentialsPath) || !file_exists($credentialsPath)) {
+            logger()->error('FirestoreHelper: credentials file not found', ['path' => $credentialsPath]);
+            return null;
+        }
+
+        $sa = json_decode(file_get_contents($credentialsPath), true);
+        $now = time();
+        $header = rtrim(strtr(base64_encode(json_encode(['alg' => 'RS256', 'typ' => 'JWT'])), '+/', '-_'), '=');
+        $claims = rtrim(strtr(base64_encode(json_encode([
+            'iss'   => $sa['client_email'],
+            'scope' => 'https://www.googleapis.com/auth/cloud-platform',
+            'aud'   => 'https://oauth2.googleapis.com/token',
+            'iat'   => $now,
+            'exp'   => $now + 3600,
+        ])), '+/', '-_'), '=');
+
+        $toSign = "$header.$claims";
+        openssl_sign($toSign, $sig, $sa['private_key'], 'SHA256');
+        $jwt = $header . '.' . $claims . '.' . rtrim(strtr(base64_encode($sig), '+/', '-_'), '=');
+
+        $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion'  => $jwt,
+        ]);
+
+        return $response->json('access_token');
+    }
+
+    /** Delete a Firestore document by path (requires service account auth) */
+    public static function deleteDocument($path)
+    {
+        $token = self::getServiceAccountToken();
+        if (!$token) return false;
+
+        $url = self::baseUrl() . "/{$path}";
+        $response = Http::withToken($token)->delete($url);
+
+        if (!$response->successful()) {
+            logger()->error('FirestoreHelper::deleteDocument failed', [
+                'path'     => $path,
+                'status'   => $response->status(),
+                'response' => $response->json(),
+            ]);
+            return false;
+        }
+
+        return true;
+    }
+
+    /** Delete a Firebase Auth user by UID using the Admin SDK */
+    public static function deleteFirebaseAuthUser($uid)
+    {
+        if (empty($uid)) return false;
+
+        try {
+            $credentialsPath = config('firebase.credentials');
+            $factory = (new \Kreait\Firebase\Factory)->withServiceAccount($credentialsPath);
+            $auth = $factory->createAuth();
+            $auth->deleteUser($uid);
+            return true;
+        } catch (\Throwable $e) {
+            logger()->error('FirestoreHelper::deleteFirebaseAuthUser failed', [
+                'uid' => $uid,
+                'error' => $e->getMessage(),
+            ]);
+            return false;
+        }
+    }
 }

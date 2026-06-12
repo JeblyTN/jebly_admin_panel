@@ -949,7 +949,7 @@
                             } else {
                                 $(".vendor_email").html("");
                             }
-                            if (user.phonenumber != "" && user.phoneNumber != null) {
+                            if (user.phoneNumber != "" && user.phoneNumber != null) {
                                 $(".vendor_phoneNumber").html(shortEditNumber(user.phoneNumber));
                             } else {
                                 $(".vendor_phoneNumber").html("");

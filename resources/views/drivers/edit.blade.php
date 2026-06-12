@@ -95,7 +95,7 @@ foreach ($countries as $keycountry => $valuecountry) {
                                 <label class="col-3 control-label">{{trans('lang.user_phone')}}</label>
                                 <div class="col-md-6">
                                     <div class="phone-box position-relative" id="phone-box"> 
-                                        <select name="country" id="country_selector" class="form-control country_code" disabled>
+                                        <select name="country" id="country_selector" class="form-control country_code">
                                             <option value="">{{ trans("lang.select_country") }}</option>
                                             @foreach($countries_data as $country)
                                             <option value="{{ $country->code }}"  data-phonecode="{{ $country->phoneCode }}" data-iso="{{ $country->code }}">{{$country->countryName}}
@@ -103,7 +103,7 @@ foreach ($countries as $keycountry => $valuecountry) {
                                             </option>
                                             @endforeach
                                         </select>
-                                        <input type="text" class="form-control user_phone" disabled onkeypress="return chkAlphabets2(event,'error2')">
+                                        <input type="text" class="form-control user_phone" onkeypress="return chkAlphabets2(event,'error2')">
                                         <div id="error2" class="err"></div>
                                     </div>
                                 </div>

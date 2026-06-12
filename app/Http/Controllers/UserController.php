@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FirestoreHelper;
 use App\Mail\DynamicEmail;
 use App\Models\User;
 use App\Models\Role;
@@ -154,14 +155,20 @@ class UserController extends Controller
     {
         $id = json_decode($id);
 
-        if (is_array($id)) {
+        $ids = is_array($id) ? $id : [$id];
 
-            for ($i = 0; $i < count($id); $i++) {
-                $users = User::find($id[$i]);
-                $users->delete();
+        foreach ($ids as $userId) {
+            $user = User::find($userId);
+            if (!$user) continue;
+
+            $uid = $user->uid;
+
+            // Delete from Firestore and Firebase Auth if a Firebase UID exists
+            if (!empty($uid)) {
+                FirestoreHelper::deleteDocument('users/' . $uid);
+                FirestoreHelper::deleteFirebaseAuthUser($uid);
             }
-        } else {
-            $user = User::find($id);
+
             $user->delete();
         }
 
